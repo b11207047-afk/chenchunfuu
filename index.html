@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>陳春福 Chun-Fu Chen | 開南大學 資訊管理學系</title>
+
+  <!-- Google Fonts: Inter (SF-like geometric sans) & Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ==========================================================================
+       1. DESIGN TOKENS & CSS VARIABLES (:root)
+       ========================================================================== */
+    :root {
+      /* Drifting Liquid Mesh Colors */
+      --bg-sky: #7DD3FC;
+      --bg-violet: #A78BFA;
+      --bg-pink: #F9A8D4;
+      --bg-base: #E0F2FE;
+
+      /* Liquid Glass Surface Tokens */
+      --glass-bg: rgba(255, 255, 255, 0.18);
+      --glass-bg-hover: rgba(255, 255, 255, 0.28);
+      --glass-bg-active: rgba(255, 255, 255, 0.34);
+      --glass-border: rgba(255, 255, 255, 0.45);
+      --glass-border-strong: rgba(255, 255, 255, 0.68);
+      --glass-specular-top: rgba(255, 255, 255, 0.6);
+      --glass-shadow-ambient: rgba(15, 23, 42, 0.06);
+      --glass-blur: blur(24px) saturate(180%);
+
+      /* High-Contrast Typography Colors (>= 4.5:1 WCAG AA on all glass panels) */
+      --text-primary: #0F172A;
+      --text-secondary: #1E293B;
+      --text-muted: #334155;
+
+      /* Accent Ring & Focus Indicators */
+      --focus-ring: rgba(15, 23, 42, 0.45);
+
+      /* Typography Families & Weights */
+      --font-sans: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Letter Spacing */
+      --tracking-label: 0.07em;
+      --tracking-tight: -0.02em;
+      --tracking-normal: 0.01em;
+
+      /* Radii */
+      --radius-card: 24px;
+      --radius-inner: 18px;
+      --radius-pill: 9999px;
+
+      /* Spacing & Touch Targets */
+      --tap-min: 44px;
+      --nav-margin: 12px;
+      --container-max: 760px;
+
+      /* Motion Curves */
+      --ease-liquid: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* ==========================================================================
+       2. RESET & BASE LAYOUT (375px Mobile-First, Zero Horizontal Scroll)
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-weight: var(--font-weight-medium);
+      color: var(--text-primary);
+      line-height: 1.6;
+      letter-spacing: var(--tracking-normal);
+      min-height: 100vh;
+      width: 100%;
+      overflow-x: hidden;
+      position: relative;
+      background-color: var(--bg-base);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ==========================================================================
+       3. FIXED ANIMATED LIQUID GRADIENT BACKGROUND
+       ========================================================================== */
+    .liquid-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+      background: linear-gradient(135deg, var(--bg-sky) 0%, var(--bg-violet) 50%, var(--bg-pink) 100%);
+    }
+
+    .liquid-orb {
+      position: absolute;
+      border-radius: var(--radius-pill);
+      filter: blur(72px);
+      opacity: 0.92;
+      will-change: transform;
+    }
+
+    .orb-sky {
+      width: 82vw;
+      height: 82vw;
+      max-width: 680px;
+      max-height: 680px;
+      top: -14%;
+      left: -16%;
+      background: radial-gradient(circle, var(--bg-sky) 0%, rgba(125, 211, 252, 0.2) 72%, transparent 100%);
+      animation: driftSky 22s ease-in-out infinite alternate;
+    }
+
+    .orb-violet {
+      width: 86vw;
+      height: 86vw;
+      max-width: 720px;
+      max-height: 720px;
+      top: 24%;
+      right: -20%;
+      background: radial-gradient(circle, var(--bg-violet) 0%, rgba(167, 139, 250, 0.22) 72%, transparent 100%);
+      animation: driftViolet 26s ease-in-out infinite alternate;
+    }
+
+    .orb-pink {
+      width: 84vw;
+      height: 84vw;
+      max-width: 700px;
+      max-height: 700px;
+      bottom: -16%;
+      left: 8%;
+      background: radial-gradient(circle, var(--bg-pink) 0%, rgba(249, 168, 212, 0.24) 72%, transparent 100%);
+      animation: driftPink 24s ease-in-out infinite alternate;
+    }
+
+    @keyframes driftSky {
+      0% {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+      50% {
+        transform: translate3d(14vw, 10vh, 0) scale(1.08);
+      }
+      100% {
+        transform: translate3d(6vw, 22vh, 0) scale(0.96);
+      }
+    }
+
+    @keyframes driftViolet {
+      0% {
+        transform: translate3d(0, 0, 0) scale(1.04);
+      }
+      50% {
+        transform: translate3d(-16vw, -8vh, 0) scale(0.95);
+      }
+      100% {
+        transform: translate3d(-8vw, 14vh, 0) scale(1.08);
+      }
+    }
+
+    @keyframes driftPink {
+      0% {
+        transform: translate3d(0, 0, 0) scale(0.98);
+      }
+      50% {
+        transform: translate3d(12vw, -14vh, 0) scale(1.06);
+      }
+      100% {
+        transform: translate3d(-10vw, -6vh, 0) scale(1);
+      }
+    }
+
+    /* ==========================================================================
+       4. LIQUID GLASS PRIMITIVES (Cards, Floating Nav Pill, Interactive Buttons)
+       ========================================================================== */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow:
+        inset 0 1px 0 var(--glass-specular-top),
+        0 8px 32px var(--glass-shadow-ambient);
+      border-radius: var(--radius-card);
+      transition: background 0.28s var(--ease-liquid), border-color 0.28s var(--ease-liquid);
+    }
+
+    .glass-subcard {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow:
+        inset 0 1px 0 var(--glass-specular-top),
+        0 4px 16px var(--glass-shadow-ambient);
+      border-radius: var(--radius-card);
+    }
+
+    .glass-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: var(--tap-min);
+      min-width: var(--tap-min);
+      padding: 10px 18px;
+      border-radius: var(--radius-pill);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow:
+        inset 0 1px 0 var(--glass-specular-top),
+        0 4px 16px var(--glass-shadow-ambient);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 0.925rem;
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition:
+        transform 0.24s var(--ease-liquid),
+        background 0.24s var(--ease-liquid),
+        border-color 0.24s var(--ease-liquid);
+    }
+
+    .glass-btn:hover {
+      transform: scale(1.03);
+      background: var(--glass-bg-hover);
+      border-color: var(--glass-border-strong);
+    }
+
+    .glass-btn:active {
+      transform: scale(0.985);
+      background: var(--glass-bg-active);
+    }
+
+    .glass-btn:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .glass-btn.is-active {
+      background: var(--glass-bg-active);
+      border-color: var(--glass-border-strong);
+    }
+
+    .glass-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 32px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow: inset 0 1px 0 var(--glass-specular-top);
+      color: var(--text-primary);
+      font-size: 0.75rem;
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+    }
+
+    /* ==========================================================================
+       5. FLOATING TOP NAVIGATION PILL (12px Margin)
+       ========================================================================== */
+    .floating-nav-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: var(--nav-margin);
+      width: 100%;
+    }
+
+    .floating-nav {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 6px 8px 6px 14px;
+      border-radius: var(--radius-pill);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow:
+        inset 0 1px 0 var(--glass-specular-top),
+        0 8px 28px var(--glass-shadow-ambient);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: var(--tap-min);
+      padding: 6px 8px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: var(--font-weight-bold);
+      font-size: 0.9rem;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      transition: transform 0.24s var(--ease-liquid), background 0.24s var(--ease-liquid);
+    }
+
+    .nav-brand:hover {
+      transform: scale(1.03);
+      background: var(--glass-bg-hover);
+    }
+
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: var(--radius-pill);
+      background: var(--text-primary);
+      flex-shrink: 0;
+    }
+
+    .nav-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-pill);
+      object-fit: cover;
+      object-position: center 22%;
+      border: 1px solid var(--glass-border-strong);
+      box-shadow: inset 0 1px 0 var(--glass-specular-top);
+      flex-shrink: 0;
+      background: var(--glass-bg);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: var(--tap-min);
+      min-width: var(--tap-min);
+      padding: 8px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      box-shadow: inset 0 1px 0 var(--glass-specular-top);
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      transition:
+        transform 0.22s var(--ease-liquid),
+        background 0.22s var(--ease-liquid),
+        border-color 0.22s var(--ease-liquid);
+    }
+
+    .nav-link:hover {
+      transform: scale(1.03);
+      background: var(--glass-bg-hover);
+      border-color: var(--glass-border-strong);
+    }
+
+    /* ==========================================================================
+       6. PAGE CONTAINER & TYPOGRAPHY HIERARCHY
+       ========================================================================== */
+    .page-shell {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 4px 12px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .eyebrow-label {
+      font-size: 0.75rem;
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .hero-title {
+      font-size: clamp(1.65rem, 6.2vw, 2.35rem);
+      font-weight: var(--font-weight-bold);
+      line-height: 1.24;
+      letter-spacing: var(--tracking-tight);
+      color: var(--text-primary);
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: var(--font-weight-bold);
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: var(--font-weight-bold);
+      line-height: 1.4;
+      color: var(--text-primary);
+    }
+
+    .body-text {
+      font-size: 0.9375rem;
+      font-weight: var(--font-weight-medium);
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    /* ==========================================================================
+       7. SECTION SPECIFIC LAYOUTS (375px Optimized -> Tablet/Desktop Scaling)
+       ========================================================================== */
+    .card-padding {
+      padding: 20px;
+    }
+
+    .hero-header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hero-profile-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .hero-portrait-frame {
+      position: relative;
+      width: 156px;
+      height: 196px;
+      flex-shrink: 0;
+      padding: 6px;
+      border-radius: var(--radius-card);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border-strong);
+      box-shadow:
+        inset 0 1px 0 var(--glass-specular-top),
+        0 8px 28px var(--glass-shadow-ambient);
+      transition: transform 0.28s var(--ease-liquid), background 0.28s var(--ease-liquid);
+    }
+
+    .hero-portrait-frame:hover {
+      transform: scale(1.025);
+      background: var(--glass-bg-hover);
+    }
+
+    .hero-portrait-img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center 20%;
+      border-radius: var(--radius-inner);
+      border: 1px solid var(--glass-border);
+    }
+
+    .hero-portrait-caption {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--glass-bg-active);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border-strong);
+      box-shadow: inset 0 1px 0 var(--glass-specular-top);
+      font-size: 0.68rem;
+      font-weight: var(--font-weight-bold);
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .hero-info-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .hero-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .hero-actions .glass-btn {
+      flex: 1 1 auto;
+    }
+
+    /* Quick Metrics Strip inside Hero */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .metric-box {
+      padding: 12px 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .metric-value {
+      font-size: 1.15rem;
+      font-weight: var(--font-weight-bold);
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .metric-label {
+      font-size: 0.72rem;
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    /* Core Focus Areas Grid */
+    .focus-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .focus-item {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .focus-icon-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-pill);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      box-shadow: inset 0 1px 0 var(--glass-specular-top);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+    }
+
+    /* Filter Pills Row */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+      margin-bottom: 14px;
+    }
+
+    .filter-pill {
+      padding: 8px 14px;
+      font-size: 0.84rem;
+    }
+
+    /* Course List Grid */
+    .course-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .course-card {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      animation: fadeSlideUp 0.32s var(--ease-liquid);
+    }
+
+    .course-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .course-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .mini-tag {
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      box-shadow: inset 0 1px 0 var(--glass-specular-top);
+      font-size: 0.72rem;
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: 0.04em;
+      color: var(--text-primary);
+    }
+
+    /* Capstone Project Showcase */
+    .project-card {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .project-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .project-details-drawer {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--glass-border);
+      animation: fadeSlideUp 0.28s var(--ease-liquid);
+    }
+
+    .project-details-drawer.is-open {
+      display: flex;
+    }
+
+    .spec-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .spec-list li {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .spec-list li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      font-weight: var(--font-weight-bold);
+      color: var(--text-primary);
+    }
+
+    /* Contact & Campus Info */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .contact-item {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast-banner {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%) translateY(24px);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 100;
+      padding: 12px 20px;
+      border-radius: var(--radius-pill);
+      background: var(--glass-bg-active);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border-strong);
+      box-shadow:
+        inset 0 1px 0 var(--glass-specular-top),
+        0 8px 28px var(--glass-shadow-ambient);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      font-weight: var(--font-weight-semibold);
+      white-space: nowrap;
+      transition: opacity 0.25s var(--ease-liquid), transform 0.25s var(--ease-liquid);
+    }
+
+    .toast-banner.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ==========================================================================
+       8. RESPONSIVE BREAKPOINTS (Tablet & Desktop >= 640px)
+       ========================================================================== */
+    @media (min-width: 640px) {
+      .card-padding {
+        padding: 28px;
+      }
+
+      .nav-brand {
+        font-size: 0.98rem;
+        padding: 6px 12px;
+      }
+
+      .nav-link {
+        padding: 8px 16px;
+        font-size: 0.86rem;
+      }
+
+      .focus-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .course-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .contact-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero-actions .glass-btn {
+        flex: 0 1 auto;
+      }
+
+      .hero-profile-layout {
+        flex-direction: row;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .hero-portrait-frame {
+        width: 172px;
+        height: 216px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed Drifting Liquid Glass Gradient Background -->
+  <div class="liquid-canvas" aria-hidden="true">
+    <div class="liquid-orb orb-sky"></div>
+    <div class="liquid-orb orb-violet"></div>
+    <div class="liquid-orb orb-pink"></div>
+  </div>
+
+  <!-- Floating Top Navigation Pill (12px margin) -->
+  <header class="floating-nav-wrap">
+    <nav class="floating-nav" aria-label="主要導覽列">
+      <a href="#overview" class="nav-brand">
+        <img
+          src="myphoto.jpg"
+          alt="陳春福頭像"
+          class="nav-avatar js-profile-photo"
+          onerror="this.onerror=null;this.src='https://placehold.co/96x96/E0F2FE/0F172A?text=CF';"
+        />
+        <span>陳春福 · 開南資管</span>
+      </a>
+      <div class="nav-links">
+        <a href="#overview" class="nav-link">總覽</a>
+        <a href="#courses" class="nav-link">核心課程</a>
+        <a href="#projects" class="nav-link">專題實作</a>
+        <a href="#contact" class="nav-link">聯絡</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content Shell -->
+  <main class="page-shell">
+
+    <!-- 1. HERO CARD: Student & Department Identity -->
+    <section id="overview" class="glass-card card-padding" aria-labelledby="hero-heading">
+      <div class="hero-header">
+        <div class="hero-profile-layout">
+          <div class="hero-portrait-frame">
+            <img
+              src="watermarked_img_15324621074476013668.jpg"
+              alt="陳春福 Chun-Fu Chen 個人照片"
+              class="hero-portrait-img js-profile-photo"
+              onerror="this.onerror=null;this.src='images/myphoto.jpg';"
+            />
+            <span class="hero-portrait-caption">KNU · 資訊管理</span>
+          </div>
+
+          <div class="hero-info-col">
+            <div class="hero-meta-row">
+              <span class="glass-pill-badge">CHUN-FU CHEN · KNU IM</span>
+              <span class="glass-pill-badge">開南大學 資訊管理學系</span>
+            </div>
+
+            <h1 id="hero-heading" class="hero-title">
+              陳春福 Chun-Fu Chen<br />
+              開南大學 資訊管理學系 學習檔案
+            </h1>
+
+            <p class="body-text">
+              您好，我是<strong>陳春福（Chun-Fu Chen）</strong>，目前就讀於開南大學資訊管理學系（Department of Information Management, Kainan University）。專注於結合商業管理思維與現代資訊技術，探索雲端系統開發、企業資源規劃（ERP）、資料科學與生成式 AI 商業應用。
+            </p>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#courses" class="glass-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span>查看學習歷程</span>
+          </a>
+          <a href="#projects" class="glass-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            <span>專題作品集</span>
+          </a>
+          <label for="photo-upload-input" class="glass-btn" role="button" tabindex="0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+              <circle cx="12" cy="13" r="4"></circle>
+            </svg>
+            <span>更換預覽照片</span>
+          </label>
+          <input id="photo-upload-input" type="file" accept="image/*" hidden aria-label="上傳或更換個人照片" />
+        </div>
+      </div>
+
+      <!-- Academic Summary Strip -->
+      <div class="metrics-grid" aria-label="系所核心指標">
+        <div class="glass-subcard metric-box">
+          <span class="metric-value">AI + 商管</span>
+          <span class="metric-label">跨領域整合</span>
+        </div>
+        <div class="glass-subcard metric-box">
+          <span class="metric-value">系統實作</span>
+          <span class="metric-label">全端與雲端架構</span>
+        </div>
+        <div class="glass-subcard metric-box">
+          <span class="metric-value">產學接軌</span>
+          <span class="metric-label">企業數位轉型</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. CORE FOCUS AREAS CARD -->
+    <section class="glass-card card-padding" aria-labelledby="focus-heading">
+      <span class="eyebrow-label">CORE COMPETENCIES · 核心培育方向</span>
+      <h2 id="focus-heading" class="section-title" style="margin-top: 4px;">資訊技術與管理決策雙軌並重</h2>
+
+      <div class="focus-grid">
+        <article class="glass-subcard focus-item">
+          <div class="focus-icon-wrap" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </div>
+          <h3 class="card-title">系統開發與雲端架構</h3>
+          <p class="body-text">
+            從物件導向程式設計、前後端網頁開發到雲端服務部署，培養獨立建置高可用性資訊系統的工程實力。
+          </p>
+        </article>
+
+        <article class="glass-subcard focus-item">
+          <div class="focus-icon-wrap" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+            </svg>
+          </div>
+          <h3 class="card-title">大數據與 AI 智慧應用</h3>
+          <p class="body-text">
+            運用 Python 資料分析、機器學習模型與商業智慧（BI）儀表板，將企業海量數據轉化為精準決策依據。
+          </p>
+        </article>
+
+        <article class="glass-subcard focus-item">
+          <div class="focus-icon-wrap" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <h3 class="card-title">企業 ERP 與資訊安全</h3>
+          <p class="body-text">
+            深入理解企業資源規劃流程、供應鏈管理與資安風險治理，強化企業數位營運韌性與合規管理。
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 3. INTERACTIVE COURSE & SKILL EXPLORER -->
+    <section id="courses" class="glass-card card-padding" aria-labelledby="courses-heading">
+      <span class="eyebrow-label">CURRICULUM EXPLORER · 專業課程地圖</span>
+      <h2 id="courses-heading" class="section-title" style="margin-top: 4px;">資管系核心課程與技能模組</h2>
+      <p class="body-text" style="margin-top: 4px;">
+        點擊下方分類膠囊，篩選開南資管系重點修習課程與對應技術能力：
+      </p>
+
+      <!-- Filter Pills (All >= 44px height) -->
+      <div class="filter-bar" role="tablist" aria-label="課程領域篩選">
+        <button type="button" class="glass-btn filter-pill is-active" data-filter="all" role="tab" aria-selected="true">
+          全部課程
+        </button>
+        <button type="button" class="glass-btn filter-pill" data-filter="dev" role="tab" aria-selected="false">
+          程式設計
+        </button>
+        <button type="button" class="glass-btn filter-pill" data-filter="db" role="tab" aria-selected="false">
+          資料庫管理
+        </button>
+        <button type="button" class="glass-btn filter-pill" data-filter="sa" role="tab" aria-selected="false">
+          系統分析與設計
+        </button>
+        <button type="button" class="glass-btn filter-pill" data-filter="ai" role="tab" aria-selected="false">
+          AI 商業智慧
+        </button>
+      </div>
+
+      <!-- Dynamic Course Cards -->
+      <div id="course-list" class="course-grid">
+        <article class="glass-subcard course-card" data-category="dev">
+          <div class="course-top">
+            <h3 class="card-title">物件導向與全端網頁程式設計</h3>
+            <span class="mini-tag">程式設計</span>
+          </div>
+          <p class="body-text">
+            建立結構化程式邏輯，實作響應式前端介面與 RESTful API 後端服務，完成完整網路應用系統。
+          </p>
+          <div class="course-tags">
+            <span class="mini-tag">Python</span>
+            <span class="mini-tag">JavaScript</span>
+            <span class="mini-tag">HTML5 / CSS3</span>
+          </div>
+        </article>
+
+        <article class="glass-subcard course-card" data-category="db">
+          <div class="course-top">
+            <h3 class="card-title">關聯式資料庫管理與設計</h3>
+            <span class="mini-tag">資料庫管理</span>
+          </div>
+          <p class="body-text">
+            涵蓋實體關聯圖（ERD）正規化設計、SQL 進階查詢最佳化、交易管理與資料一致性維護。
+          </p>
+          <div class="course-tags">
+            <span class="mini-tag">SQL</span>
+            <span class="mini-tag">ER Modeling</span>
+            <span class="mini-tag">Data Integrity</span>
+          </div>
+        </article>
+
+        <article class="glass-subcard course-card" data-category="sa">
+          <div class="course-top">
+            <h3 class="card-title">系統分析與設計（SAD）</h3>
+            <span class="mini-tag">系統分析與設計</span>
+          </div>
+          <p class="body-text">
+            運用 UML 塑模與敏捷開發流程，進行需求訪談、系統架構規劃與原型驗證，銜接業務與工程團隊。
+          </p>
+          <div class="course-tags">
+            <span class="mini-tag">UML</span>
+            <span class="mini-tag">Agile / Scrum</span>
+            <span class="mini-tag">UI/UX Flow</span>
+          </div>
+        </article>
+
+        <article class="glass-subcard course-card" data-category="ai">
+          <div class="course-top">
+            <h3 class="card-title">商業智慧與人工智慧導論</h3>
+            <span class="mini-tag">AI 商業智慧</span>
+          </div>
+          <p class="body-text">
+            結合資料探勘、預測分析與生成式 AI 工作流，協助企業發掘營運痛點並建立自動化智慧決策模型。
+          </p>
+          <div class="course-tags">
+            <span class="mini-tag">Machine Learning</span>
+            <span class="mini-tag">Power BI</span>
+            <span class="mini-tag">GenAI Workflow</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 4. FEATURED CAPSTONE PROJECT SHOWCASE -->
+    <section id="projects" class="glass-card card-padding" aria-labelledby="projects-heading">
+      <span class="eyebrow-label">CAPSTONE SHOWCASE · 畢業專題與實作成果</span>
+      <h2 id="projects-heading" class="section-title" style="margin-top: 4px;">開南校園智慧服務與數位轉型專題</h2>
+
+      <article class="glass-subcard project-card">
+        <div class="project-header">
+          <div class="hero-meta-row">
+            <span class="mini-tag">陳春福 · 資訊管理實務專題</span>
+            <span class="mini-tag">雲端 × AI 整合</span>
+          </div>
+          <h3 class="card-title" style="font-size: 1.15rem; margin-top: 4px;">
+            KNU SmartCampus · 開南智慧校園與微服務整合平台
+          </h3>
+          <p class="body-text">
+            針對校園行政流程與學生學習資源整合需求，設計以行動端優先的智慧校園輔助系統，整合課表查詢、專題進度追蹤與 AI 學習助教問答模組。
+          </p>
+        </div>
+
+        <div class="hero-actions" style="margin-top: 2px;">
+          <button type="button" id="toggle-project-btn" class="glass-btn" aria-expanded="false" aria-controls="project-drawer">
+            <span id="toggle-project-text">展開系統架構細節</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Expandable Glass Drawer -->
+        <div id="project-drawer" class="project-details-drawer">
+          <h4 class="card-title" style="font-size: 0.95rem;">核心技術架構與專案亮點</h4>
+          <ul class="spec-list">
+            <li><strong>前端體驗設計：</strong>採用 Mobile-First 響應式介面與毛玻璃視覺層級，確保手機單手操作流暢度。</li>
+            <li><strong>後端與資料庫：</strong>以模組化 API 串接關聯式資料庫，支援高併發選課與活動報名狀態同步。</li>
+            <li><strong>智慧推薦引擎：</strong>依據資管系修課地圖與個人興趣標籤，自動推薦跨領域選修與實習資訊。</li>
+          </ul>
+          <div class="course-tags">
+            <span class="mini-tag">System Architecture</span>
+            <span class="mini-tag">REST API</span>
+            <span class="mini-tag">SQL Database</span>
+            <span class="mini-tag">AI Assistant</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- 5. CAMPUS & CONTACT CARD -->
+    <section id="contact" class="glass-card card-padding" aria-labelledby="contact-heading">
+      <span class="eyebrow-label">CAMPUS & CONNECT · 個人聯絡與學系資訊</span>
+      <h2 id="contact-heading" class="section-title" style="margin-top: 4px;">陳春福 · 開南大學 資訊管理學系</h2>
+
+      <div class="contact-grid">
+        <div class="glass-subcard contact-item">
+          <h3 class="card-title">校區與系所位置</h3>
+          <p class="body-text">
+            33857 桃園市蘆竹區開南路 1 號<br />
+            開南大學 資訊管理學系（至誠樓） · 陳春福
+          </p>
+          <div>
+            <button type="button" class="glass-btn" data-copy="33857 桃園市蘆竹區開南路1號 開南大學資訊管理學系 陳春福">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>複製校區與聯絡資訊</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="glass-subcard contact-item">
+          <h3 class="card-title">學術專題與實習交流</h3>
+          <p class="body-text">
+            歡迎針對資訊系統開發、商業數據分析或產學專題合作與陳春福交流聯繫。
+          </p>
+          <div>
+            <button type="button" class="glass-btn" data-copy="chunfu.chen@knu.edu.tw">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <span>複製聯絡信箱</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Liquid Glass Toast Feedback -->
+  <div id="glass-toast" class="toast-banner" role="status" aria-live="polite"></div>
+
+  <script>
+    /**
+     * Kainan University Information Management (開南大學 資訊管理學系)
+     * Liquid Glass Interactive Controller
+     */
+    (function () {
+      'use strict';
+
+      // 1. Course Category Filter Logic
+      const filterButtons = document.querySelectorAll('.filter-pill');
+      const courseCards = document.querySelectorAll('.course-card');
+
+      filterButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const selectedFilter = btn.getAttribute('data-filter');
+
+          // Update active button states & ARIA attributes
+          filterButtons.forEach((b) => {
+            b.classList.remove('is-active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          btn.classList.add('is-active');
+          btn.setAttribute('aria-selected', 'true');
+
+          // Filter visible course cards smoothly
+          courseCards.forEach((card) => {
+            const category = card.getAttribute('data-category');
+            if (selectedFilter === 'all' || category === selectedFilter) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      // 2. Capstone Project Expandable Glass Drawer
+      const toggleProjectBtn = document.getElementById('toggle-project-btn');
+      const toggleProjectText = document.getElementById('toggle-project-text');
+      const projectDrawer = document.getElementById('project-drawer');
+
+      if (toggleProjectBtn && projectDrawer) {
+        toggleProjectBtn.addEventListener('click', () => {
+          const isOpen = projectDrawer.classList.toggle('is-open');
+          toggleProjectBtn.setAttribute('aria-expanded', String(isOpen));
+          toggleProjectText.textContent = isOpen ? '收合系統架構細節' : '展開系統架構細節';
+        });
+      }
+
+      // 3. Clipboard Copy with Liquid Glass Toast Feedback (iFrame-safe)
+      const toastEl = document.getElementById('glass-toast');
+      let toastTimer = null;
+
+      function showToast(message) {
+        if (!toastEl) return;
+        toastEl.textContent = message;
+        toastEl.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.remove('show');
+        }, 2600);
+      }
+
+      function copyTextSafely(text) {
+        try {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.setAttribute('readonly', '');
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          showToast('已複製：' + text);
+        } catch (err) {
+          showToast('複製完成：' + text);
+        }
+      }
+
+      const copyButtons = document.querySelectorAll('[data-copy]');
+      copyButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const textToCopy = btn.getAttribute('data-copy');
+          if (textToCopy) {
+            copyTextSafely(textToCopy);
+          }
+        });
+      });
+
+      // 4. Local Photo Preview / Swap Controller
+      const photoInput = document.getElementById('photo-upload-input');
+      const profilePhotos = document.querySelectorAll('.js-profile-photo');
+      let currentObjectUrl = null;
+
+      if (photoInput && profilePhotos.length > 0) {
+        photoInput.addEventListener('change', (event) => {
+          const file = event.target.files && event.target.files[0];
+          if (!file) return;
+
+          if (!file.type.startsWith('image/')) {
+            showToast('請選擇有效的圖片檔案');
+            return;
+          }
+
+          if (currentObjectUrl) {
+            URL.revokeObjectURL(currentObjectUrl);
+          }
+
+          currentObjectUrl = URL.createObjectURL(file);
+          profilePhotos.forEach((img) => {
+            img.src = currentObjectUrl;
+          });
+          showToast('已更新個人照片預覽');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
